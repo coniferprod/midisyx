@@ -1,6 +1,4 @@
-from midisyx.message import Message
 import sys
-
 from midisyx.message import Message
 
 with open(sys.argv[1], 'rb') as f:
