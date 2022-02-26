@@ -1,4 +1,4 @@
-from email.message import Message
+from midisyx.message import Message
 import sys
 
 from midisyx.message import Message
