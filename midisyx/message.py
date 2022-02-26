@@ -1,7 +1,6 @@
-from typing import Tuple, Union, Optional
 from enum import Enum, auto
 
-from manufacturer import find_manufacturer
+from midisyx.manufacturer import find_manufacturer
 
 class MessageKind(Enum):
     DEVELOPMENT = auto()
@@ -62,5 +61,3 @@ class Message:
             s += '(unknown)' if self.manufacturer is None else '{}'.format(self.manufacturer)
             s += '  Payload: {0} bytes'.format(len(self.payload))
         return s
-
-
