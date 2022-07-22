@@ -1,17 +1,17 @@
-from typing import Tuple, Union, Optional
+from typing import Tuple, Optional
 from enum import Enum, auto
 
-class ManufacturerGroup(Enum):
+class Group(Enum):
     AMERICAN = auto()
     EUROPEAN_OR_OTHER = auto()
     JAPANESE = auto()
     DEVELOPMENT = auto()
 
 class Manufacturer:
-    def __init__(self, identifier: Tuple[int, ...], name: str, group: ManufacturerGroup):
+    def __init__(self, identifier: Tuple[int, ...]):
+        if not identifier in self._names:
+            raise ValueError('Unknown manufacturer identifier')
         self.identifier = identifier
-        self.name = name
-        self.group = group
 
     def __str__(self) -> str:
         s = '{} ('.format(self.name)
@@ -22,21 +22,22 @@ class Manufacturer:
         s += ')'
         return s
 
-MANUFACTURERS: dict[Tuple[int, ...], Tuple[str, ManufacturerGroup]] = {
-    (0x01,): ('Sequential Circuits', ManufacturerGroup.AMERICAN),
-    (0x00, 0x00, 0x01): ('Time/Warner Interactive', ManufacturerGroup.AMERICAN),
-    (0x00, 0x00, 0x0E): ('Alesis Studio Electronics', ManufacturerGroup.AMERICAN),
-    (0x00, 0x20, 0x29): ('Focusrite/Novation', ManufacturerGroup.EUROPEAN_OR_OTHER),
-    (0x40,): ('Kawai Musical Instruments MFG. CO. Ltd', ManufacturerGroup.JAPANESE),
-    (0x41,): ('Roland Corporation', ManufacturerGroup.JAPANESE),
-    (0x42,): ('Korg Inc.', ManufacturerGroup.JAPANESE),
-    (0x43,): ('Yamaha Corporation', ManufacturerGroup.JAPANESE),
-}
+    @property
+    def group(self) -> Group:
+        return Group.DEVELOPMENT
 
-def find_manufacturer(identifier: Tuple[int, ...]) -> Optional[Manufacturer]:
-    if identifier in MANUFACTURERS:
-        manuf = MANUFACTURERS[identifier]
-        return Manufacturer(identifier, manuf[0], manuf[1])
-    else:
-        return None
+    @property
+    def name(self) -> str:
+        # identifier is valid or unless this instance would not exist
+        return self._names[self.identifier]
 
+    _names: dict[Tuple[int, ...], str] = {
+        (0x01,): 'Sequential Circuits',
+        (0x00, 0x00, 0x01): 'Time/Warner Interactive',
+        (0x00, 0x00, 0x0E): 'Alesis Studio Electronics',
+        (0x00, 0x20, 0x29): 'Focusrite/Novation',
+        (0x40,): 'Kawai Musical Instruments MFG. CO. Ltd',
+        (0x41,): 'Roland Corporation',
+        (0x42,): 'Korg Inc.',
+        (0x43,): 'Yamaha Corporation',
+    }
