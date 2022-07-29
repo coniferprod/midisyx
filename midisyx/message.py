@@ -22,21 +22,16 @@ class Message:
         if data[1] == 0x7d:
             self.kind = Kind.DEVELOPMENT
             self.payload = data[2:-1]
-        elif data[1] == 0x7e:
+        elif data[1] == 0x7e or data[1] == 0x7f:
             self.kind = Kind.UNIVERSAL
-            self.is_realtime = False
             self.sub_id1 = data[2]
             self.sub_id2 = data[3]
             self.payload = data[4:-1]
-        elif data[1] == 0x7f:
-            self.kind = Kind.UNIVERSAL
-            self.is_realtime = True
-            self.sub_id1 = data[2]
-            self.sub_id2 = data[3]
-            self.payload = data[4:-1]
+            self.is_realtime = True if data[1] == 0x7f else False
         elif data[1] == 0x00:  # extended manufacturer
             self.kind = Kind.MANUFACTURER
             try:
+                # Initialize manufacturer with tuple of three bytes:
                 self.manufacturer = Manufacturer((data[1], data[2], data[3]))
             except:
                 raise
@@ -44,7 +39,8 @@ class Message:
         else: # standard one-byte manufacturer
             self.kind = Kind.MANUFACTURER
             try:
-                self.manufacturer = Manufacturer((data[1],))  # initialize with one-element tuple
+                # Initialize with one-byte tuple:
+                self.manufacturer = Manufacturer((data[1],))
             except:
                 raise
             self.payload = data[2:-1]
@@ -65,5 +61,5 @@ class Message:
         elif self.kind == Kind.MANUFACTURER:
             s += 'Manufacturer: '
             s += '(unknown)' if self.manufacturer is None else '{}'.format(self.manufacturer)
-            s += '  Payload: {0} bytes'.format(len(self.payload))
+            s += '\nPayload: {0} bytes'.format(len(self.payload))
         return s

@@ -2,10 +2,20 @@ from typing import Tuple, Optional
 from enum import Enum, auto
 
 class Group(Enum):
-    AMERICAN = auto()
+    NORTH_AMERICAN = auto()
     EUROPEAN_OR_OTHER = auto()
     JAPANESE = auto()
     DEVELOPMENT = auto()
+
+    def __str__(self) -> str:
+        if self == Group.NORTH_AMERICAN:
+            return "North American"
+        elif self == Group.EUROPEAN_OR_OTHER:
+            return "European or Other"
+        elif self == Group.JAPANESE:
+            return "Japanese"
+        else:
+            return "Development"
 
 class Manufacturer:
     def __init__(self, identifier: Tuple[int, ...]):
@@ -24,6 +34,21 @@ class Manufacturer:
 
     @property
     def group(self) -> Group:
+        # Handle the standard one-byte identifiers first.
+        if len(self.identifier) == 1:
+            if 0x01 <= self.identifier[0] <= 0x3F:
+                return Group.NORTH_AMERICAN
+            elif 0x40 <= self.identifier[0] <= 0x5F:
+                return Group.JAPANESE
+            # Looks like there are no identifiers assigned from 60H to 7FH
+        else: # extended three-byte identifier, look at the second byte
+            if 0x00 <= self.identifier[1] <= 0x02:
+                return Group.NORTH_AMERICAN
+            elif 0x20 <= self.identifier[1] <= 0x21:
+                return Group.EUROPEAN_OR_OTHER
+            elif 0x40 <= self.identifier[1] <= 0x4F:
+                return Group.JAPANESE
+
         return Group.DEVELOPMENT
 
     @property
@@ -41,3 +66,9 @@ class Manufacturer:
         (0x42,): 'Korg Inc.',
         (0x43,): 'Yamaha Corporation',
     }
+
+# Some pre-made manufacturers:
+kawai = Manufacturer((0x40,))
+roland = Manufacturer((0x41,))
+korg = Manufacturer((0x42,))
+yamaha = Manufacturer((0x43,))
