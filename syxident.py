@@ -21,4 +21,3 @@ print(message)
 unknown_manufacturer = Manufacturer(bytes([0x44]))
 print(unknown_manufacturer)
 print(unknown_manufacturer.get_group())
-

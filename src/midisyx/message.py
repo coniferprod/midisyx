@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-from .manufacturer import find_manufacturer, Manufacturer
+from .manufacturer import Manufacturer
 
 class MessageKind(Enum):
     DEVELOPMENT = auto()
@@ -16,6 +16,8 @@ class Message:
             raise ValueError('Not enough data for a valid MIDI System Exclusive message')
         if data[0] != INITIATOR and data[-1] != TERMINATOR:
             raise ValueError('Not a valid MIDI System Exclusive message')
+
+        self.manufacturer = None
 
         if data[1] == 0x7d:
             self.kind = MessageKind.DEVELOPMENT
