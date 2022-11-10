@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "midisyx"
+version = "0.2.0"
+description = "Helpers for processing MIDI System Exclusive messages"
+readme = "README.md"
+authors = [{ name = "Jere Käpyaho", email = "2261936+jerekapyaho@users.noreply.github.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["midi", "sysex", "utility"]
+dependencies = []
+requires-python = ">=3.4"
+
+[project.urls]
+Homepage = "https://github.com/coniferprod/midisyx"

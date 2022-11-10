@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-from midisyx.manufacturer import find_manufacturer
+from .manufacturer import find_manufacturer, Manufacturer
 
 class MessageKind(Enum):
     DEVELOPMENT = auto()
@@ -19,28 +19,28 @@ class Message:
 
         if data[1] == 0x7d:
             self.kind = MessageKind.DEVELOPMENT
-            self.payload = data[2 : -1]
+            self.payload = data[2:-1]
         elif data[1] == 0x7e:
             self.kind = MessageKind.UNIVERSAL
             self.is_realtime = False
             self.sub_id1 = data[2]
             self.sub_id2 = data[3]
-            self.payload = data[4 : -1]
+            self.payload = data[4:-1]
         elif data[1] == 0x7f:
             self.kind = MessageKind.UNIVERSAL
             self.is_realtime = True
             self.sub_id1 = data[2]
             self.sub_id2 = data[3]
-            self.payload = data[4 : -1]
+            self.payload = data[4:-1]
         elif data[1] == 0x00:  # extended manufacturer
             self.kind = MessageKind.MANUFACTURER
-            self.manufacturer = find_manufacturer((data[1], data[2], data[3]))
-            self.payload = data[4 : -1]
+            self.manufacturer = Manufacturer(data[1:4])
+            self.payload = data[4:-1]
         else: # standard one-byte manufacturer
             self.kind = MessageKind.MANUFACTURER
             # Removed the type annotation from this second `manufacturer`,
             # and mypy is happy again.
-            self.manufacturer = find_manufacturer((data[1],))  # initialize with one-element tuple
+            self.manufacturer = Manufacturer(data[1:2])
             self.payload = data[2 : -1]
 
     def __str__(self) -> str:
@@ -58,6 +58,6 @@ class Message:
             s += '  Payload: {0} bytes'.format(len(self.payload))
         elif self.kind == MessageKind.MANUFACTURER:
             s += 'Manufacturer: '
-            s += '(unknown)' if self.manufacturer is None else '{}'.format(self.manufacturer)
+            s += '{0}'.format(self.manufacturer)
             s += '  Payload: {0} bytes'.format(len(self.payload))
         return s
