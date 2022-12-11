@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-from .manufacturer import Manufacturer
+from .manufacturer import Manufacturer, DEVELOPMENT
 
 class MessageKind(Enum):
     DEVELOPMENT = auto()
@@ -17,10 +17,9 @@ class Message:
         if data[0] != INITIATOR and data[-1] != TERMINATOR:
             raise ValueError('Not a valid MIDI System Exclusive message')
 
-        self.manufacturer = None
-
-        if data[1] == 0x7d:
+        if data[1] == DEVELOPMENT:
             self.kind = MessageKind.DEVELOPMENT
+            self.manufacturer = Manufacturer(bytes(data[1:2]))
             self.payload = data[2:-1]
         elif data[1] == 0x7e:
             self.kind = MessageKind.UNIVERSAL
@@ -43,7 +42,7 @@ class Message:
             # Removed the type annotation from this second `manufacturer`,
             # and mypy is happy again.
             self.manufacturer = Manufacturer(data[1:2])
-            self.payload = data[2 : -1]
+            self.payload = data[2:-1]
 
     def __str__(self) -> str:
         s = ''

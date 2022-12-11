@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "midisyx"
-version = "0.2.0"
+version = "0.3.0"
 description = "Helpers for processing MIDI System Exclusive messages"
 readme = "README.md"
 authors = [{ name = "Jere Käpyaho", email = "2261936+jerekapyaho@users.noreply.github.com" }]
@@ -16,7 +16,7 @@ classifiers = [
 ]
 keywords = ["midi", "sysex", "utility"]
 dependencies = []
-requires-python = ">=3.4"
+requires-python = ">=3.7"
 
 [project.urls]
 Homepage = "https://github.com/coniferprod/midisyx"

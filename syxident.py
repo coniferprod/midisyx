@@ -14,10 +14,10 @@ def read_file_data(filename: str) -> bytes:
         sys.exit(-1)
 
 data = read_file_data(sys.argv[1])
-print('File length = {} bytes'.format(len(data)))
+print('File length: {} bytes'.format(len(data)))
 message = Message(data)
 print(message)
 
 unknown_manufacturer = Manufacturer(bytes([0x44]))
 print(unknown_manufacturer)
-print(unknown_manufacturer.get_group())
+print(unknown_manufacturer.group)

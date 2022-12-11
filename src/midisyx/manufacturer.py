@@ -28,33 +28,37 @@ class Manufacturer:
             self.identifier = (data[0], data[1], data[2])
 
     def __str__(self) -> str:
-        s = '{} ('.format(self.get_name())
+        s = '{} ('.format(self.name)
         for i in range(len(self.identifier)):
-            s += '{0:02X}'.format(self.identifier[i])
+            s += '{0:02X}H'.format(self.identifier[i])
             if i < len(self.identifier) - 1:
                 s += ' '
         s += ')'
         return s
 
-    def get_group(self) -> ManufacturerGroup:
-        if self.identifier[0] == DEVELOPMENT:
+    @property
+    def group(self) -> ManufacturerGroup:
+        first_byte = self.identifier[0]
+        if first_byte == DEVELOPMENT:
             return ManufacturerGroup.DEVELOPMENT
-        elif self.identifier[0] == 0x00:  # extended manufacturer ID
-            if self.identifier[1] & (1 << 6) != 0:
+        elif first_byte == 0x00:  # extended manufacturer ID
+            second_byte = self.identifier[1]
+            if second_byte & (1 << 6) != 0:
                 return ManufacturerGroup.JAPANESE
-            elif self.identifier[1] & (1 << 5) != 0:
+            elif second_byte & (1 << 5) != 0:
                 return ManufacturerGroup.EUROPEAN_AND_OTHER
             else:
                 return ManufacturerGroup.NORTH_AMERICAN
-        else:
-            if self.identifier[0] in range(0x01, 0x41):
+        else: # regular one-byte manufacturer ID
+            if first_byte in range(0x01, 0x41):
                 return ManufacturerGroup.NORTH_AMERICAN
-            elif self.identifier[0] in range(0x40, 0x61):
+            elif first_byte in range(0x40, 0x61):
                 return ManufacturerGroup.JAPANESE
             else:
                 return ManufacturerGroup.EUROPEAN_AND_OTHER
 
-    def get_name(self) -> str:
+    @property
+    def name(self) -> str:
         if self.identifier in MANUFACTURERS:
             return MANUFACTURERS[self.identifier]
         else:
